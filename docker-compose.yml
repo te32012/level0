@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "database"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "user"
+    ports:
+      - 6000:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data
+  nts:
+    image: nats-streaming:latest
+    command: "--cluster_id NATS"
+    ports:
+     - 4222:4222
+     - 8222:8222
+     - 6222:6222
+  level0:
+    build: .
+    ports:
+      - 8080:8080
+    volumes:
+      - ./cash:/go/src/app/cashdirectory
+    depends_on:
+      - db
+      - nts
